@@ -2,7 +2,7 @@
 
 A task tracker with a visitor counter (React + Express + MongoDB), packaged in Docker, autoscaled on Azure Kubernetes Service with an HPA, and monitored with Azure Monitor.
 
-**Student:** [Your Name] &nbsp;|&nbsp; **Azure account:** [your-email@college.edu.in]
+**Student:** [Mustafa] &nbsp;|&nbsp; **Azure account:** [mustafa.qureshi@avantika.edu.in]
 
 ## What's inside
 
