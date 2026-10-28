@@ -1,0 +1,76 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "## Lab 2 - web app dashboard\nFive charts: CPU, memory, requests, P95 latency, replicas."
+      },
+      "name": "intro"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItemVisualization/1.0",
+        "query": "let pods = KubePodInventory | where Namespace == \"default\" and Name startswith \"web-\" | summarize by PodUid, PodName = Name;\nPerf | where TimeGenerated > ago(1h) and ObjectName == \"K8SContainer\" and CounterName == \"cpuUsageNanoCores\"\n| extend parts = split(InstanceName, \"/\") | extend PodUid = tostring(parts[array_length(parts) - 2]) | join kind=inner pods on PodUid\n| summarize CPU_pct_of_limit = avg(CounterValue) / 2000000 by bin(TimeGenerated, 1m), PodName | render timechart",
+        "size": 1,
+        "title": "CPU per pod (% of 200m limit)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "chart1"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItemVisualization/1.0",
+        "query": "let pods = KubePodInventory | where Namespace == \"default\" and Name startswith \"web-\" | summarize by PodUid, PodName = Name;\nPerf | where TimeGenerated > ago(1h) and ObjectName == \"K8SContainer\" and CounterName == \"memoryWorkingSetBytes\"\n| extend parts = split(InstanceName, \"/\") | extend PodUid = tostring(parts[array_length(parts) - 2]) | join kind=inner pods on PodUid\n| summarize Memory_MiB = avg(CounterValue) / 1048576 by bin(TimeGenerated, 1m), PodName | render timechart",
+        "size": 1,
+        "title": "Memory per pod (MiB)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "chart2"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItemVisualization/1.0",
+        "query": "AppRequests | where TimeGenerated > ago(1h) | summarize Requests = sum(ItemCount) by bin(TimeGenerated, 1m) | render columnchart",
+        "size": 1,
+        "title": "HTTP requests per minute",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "chart3"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItemVisualization/1.0",
+        "query": "AppRequests | where TimeGenerated > ago(1h) | summarize P95_ms = percentile(DurationMs, 95) by bin(TimeGenerated, 1m) | render timechart",
+        "size": 1,
+        "title": "P95 latency (ms)",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "chart4"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItemVisualization/1.0",
+        "query": "KubePodInventory | where TimeGenerated > ago(1h) and Namespace == \"default\" and Name startswith \"web-\" and PodStatus == \"Running\" | summarize Replicas = dcount(PodUid) by bin(TimeGenerated, 1m) | render timechart",
+        "size": 1,
+        "title": "Active web replicas",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "chart5"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/lab2-rg/providers/Microsoft.OperationalInsights/workspaces/<WORKSPACE_NAME>"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

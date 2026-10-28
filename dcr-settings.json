@@ -1,0 +1,11 @@
+{
+  "interval": "1m",
+  "namespaceFilteringMode": "Include",
+  "namespaces": ["default"],
+  "enableContainerLogV2": true,
+  "streams": [
+    "Microsoft-Perf",
+    "Microsoft-InsightsMetrics",
+    "Microsoft-KubePodInventory"
+  ]
+}

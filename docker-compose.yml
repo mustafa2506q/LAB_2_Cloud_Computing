@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URL: mongodb://mongo:27017/lab2
+    depends_on:
+      - mongo
+    networks: [appnet]
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    networks: [appnet]
+
+volumes:
+  mongo-data:
+
+networks:
+  appnet:
+    driver: bridge

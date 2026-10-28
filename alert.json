@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceId":   { "type": "string", "metadata": { "description": "Resource ID of the Log Analytics workspace" } },
+    "actionGroupId": { "type": "string", "metadata": { "description": "Resource ID of the e-mail action group" } },
+    "location":      { "type": "string", "defaultValue": "eastasia" }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/scheduledQueryRules",
+      "apiVersion": "2022-06-15",
+      "name": "lab2-high-cpu",
+      "location": "[parameters('location')]",
+      "properties": {
+        "displayName": "lab2-high-cpu",
+        "description": "web CPU above 75% of its limit for 2+ minutes",
+        "severity": 2,
+        "enabled": true,
+        "evaluationFrequency": "PT1M",
+        "windowSize": "PT5M",
+        "scopes": ["[parameters('workspaceId')]"],
+        "criteria": {
+          "allOf": [
+            {
+              "query": "Perf | where ObjectName == 'K8SContainer' and CounterName == 'cpuUsageNanoCores' and InstanceName endswith '/web' | summarize CpuPct = avg(CounterValue) / 2000000 by bin(TimeGenerated, 1m) | where CpuPct > 75",
+              "timeAggregation": "Count",
+              "operator": "GreaterThan",
+              "threshold": 1,
+              "failingPeriods": { "numberOfEvaluationPeriods": 1, "minFailingPeriodsToAlert": 1 }
+            }
+          ]
+        },
+        "actions": { "actionGroups": ["[parameters('actionGroupId')]"] }
+      }
+    }
+  ]
+}

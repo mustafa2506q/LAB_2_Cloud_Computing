@@ -1,0 +1,12 @@
+{
+  "name": "lab2-server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "applicationinsights": "^2.9.6",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.0"
+  }
+}
